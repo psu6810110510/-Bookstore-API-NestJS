@@ -1,5 +1,4 @@
-import { IsString, IsNotEmpty, IsNumber, IsOptional, IsUUID } from 'class-validator';
-import { Type } from 'class-transformer';
+import { IsNotEmpty, IsNumber, IsOptional, IsString } from 'class-validator';
 
 export class CreateBookDto {
   @IsString()
@@ -11,10 +10,9 @@ export class CreateBookDto {
   author: string;
 
   @IsNumber()
-  @Type(() => Number)
   price: number;
 
-  @IsUUID()
+  @IsString()
   @IsOptional()
-  categoryId?: string;
+  categoryId: string; 
 }

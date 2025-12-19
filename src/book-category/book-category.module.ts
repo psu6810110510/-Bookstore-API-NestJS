@@ -1,12 +1,13 @@
 import { Module } from '@nestjs/common';
-import { TypeOrmModule } from '@nestjs/typeorm'; // 1. import นี้
+import { TypeOrmModule } from '@nestjs/typeorm'; 
 import { BookCategoryService } from './book-category.service';
 import { BookCategoryController } from './book-category.controller';
-import { BookCategory } from './entities/book-category.entity'; // 2. import นี้
+import { BookCategory } from './entities/book-category.entity'; 
 
 @Module({
-  imports: [TypeOrmModule.forFeature([BookCategory])], // 3. ใส่บรรทัดนี้
+  imports: [TypeOrmModule.forFeature([BookCategory])], 
   controllers: [BookCategoryController],
   providers: [BookCategoryService],
+  exports: [TypeOrmModule] 
 })
 export class BookCategoryModule {}

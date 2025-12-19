@@ -31,4 +31,4 @@ export class BookCategoryController {
   remove(@Param('id') id: string) {
     return this.bookCategoryService.remove(id);
   }
-} 
+}

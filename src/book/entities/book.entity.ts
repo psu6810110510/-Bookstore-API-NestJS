@@ -19,6 +19,7 @@ export class Book {
   likeCount: number;
 
   @ManyToOne(() => BookCategory, { eager: true })
+  
   @JoinColumn({ name: 'categoryId' })
   category: BookCategory;
 

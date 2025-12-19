@@ -10,41 +10,54 @@ import { BookCategory } from '../book-category/entities/book-category.entity';
 export class BookService {
   constructor(
     @InjectRepository(Book)
-    private bookRepo: Repository<Book>,
+    private readonly bookRepo: Repository<Book>,
     @InjectRepository(BookCategory)
-    private categoryRepo: Repository<BookCategory>,
+    private readonly categoryRepo: Repository<BookCategory>,
   ) {}
 
   async create(createDto: CreateBookDto) {
-    // optional: validate category exists if categoryId provided
+    let category: BookCategory | undefined = undefined; 
+
     if (createDto.categoryId) {
-      const cat = await this.categoryRepo.findOneBy({ id: createDto.categoryId });
-      if (!cat) throw new NotFoundException(`Category ${createDto.categoryId} not found`);
+      const foundCategory = await this.categoryRepo.findOneBy({ id: createDto.categoryId });
+      if (!foundCategory) {
+        throw new NotFoundException(`Category ${createDto.categoryId} not found`);
+      }
+      category = foundCategory;
     }
 
-    const book = this.bookRepo.create(createDto as any);
-    return this.bookRepo.save(book);
+    const newBook = this.bookRepo.create({
+      title: createDto.title,
+      author: createDto.author,
+      price: createDto.price,
+      category: category,
+    });
+
+    return this.bookRepo.save(newBook);
   }
 
   findAll() {
-    return this.bookRepo.find();
+    return this.bookRepo.find({ relations: ['category'] });
   }
 
   async findOne(id: string) {
-    const book = await this.bookRepo.findOne({ where: { id } });
+    const book = await this.bookRepo.findOne({ 
+      where: { id },
+      relations: ['category'] 
+    });
     if (!book) throw new NotFoundException(`Book ${id} not found`);
     return book;
   }
 
   async update(id: string, updateDto: UpdateBookDto) {
-    await this.findOne(id);
+    await this.findOne(id); 
     await this.bookRepo.update(id, updateDto as any);
     return this.findOne(id);
   }
 
   async remove(id: string) {
-    await this.findOne(id);
-    return this.bookRepo.delete(id);
+    const book = await this.findOne(id);
+    return this.bookRepo.remove(book);
   }
 
   async incrementLikes(id: string) {

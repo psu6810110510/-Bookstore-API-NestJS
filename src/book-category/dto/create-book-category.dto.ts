@@ -1,11 +1,11 @@
-import { IsString, IsNotEmpty, IsOptional } from 'class-validator';
+import { IsNotEmpty, IsOptional, IsString } from 'class-validator';
 
 export class CreateBookCategoryDto {
-  @IsString()
-  @IsNotEmpty()
+  @IsString()         
+  @IsNotEmpty()       
   name: string;
 
-  @IsString()
-  @IsOptional()
+  @IsString()         
+  @IsOptional()       
   description?: string;
-} 
+}

@@ -2,8 +2,9 @@ import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
-import { BookCategoryModule } from './book-category/book-category.module';
 import { BookModule } from './book/book.module';
+import { BookCategoryModule } from './book-category/book-category.module';
+import { BookCategory } from './book-category/entities/book-category.entity';
 
 @Module({
   imports: [
@@ -14,9 +15,10 @@ import { BookModule } from './book/book.module';
       username: 'admin',
       password: 'password123',
       database: 'bookstore_dev',
-      // 👇 เพิ่มบรรทัดนี้สำคัญมาก! (เพื่อให้มันไปกวาดหาตารางใน Module อื่นๆ เอง)
-      autoLoadEntities: true, 
-      synchronize: true, // ใช้เฉพาะตอน Dev (มันจะแก้ Structure ตารางให้อัตโนมัติ)
+      autoLoadEntities: true,
+      entities: [BookCategory],
+      synchronize: true,
+      
     }),
     BookCategoryModule,
     BookModule,
