@@ -1,4 +1,4 @@
-import { Injectable, OnModuleInit } from '@nestjs/common';
+import { Injectable, OnModuleInit, NotFoundException } from '@nestjs/common';
 import { CreateBookCategoryDto } from './dto/create-book-category.dto';
 import { UpdateBookCategoryDto } from './dto/update-book-category.dto';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -30,23 +30,29 @@ export class BookCategoryService implements OnModuleInit {
     }
   }
 
-  create(createBookCategoryDto: CreateBookCategoryDto) {
-    return 'This action adds a new bookCategory';
+  async create(createBookCategoryDto: CreateBookCategoryDto) {
+    const category = this.bookCategoryRepository.create(createBookCategoryDto);
+    return this.bookCategoryRepository.save(category);
   }
 
   findAll() {
-    return `This action returns all bookCategory`;
+    return this.bookCategoryRepository.find();
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} bookCategory`;
+  async findOne(id: string) {
+    const category = await this.bookCategoryRepository.findOneBy({ id });
+    if (!category) throw new NotFoundException(`BookCategory ${id} not found`);
+    return category;
   }
 
-  update(id: number, updateBookCategoryDto: UpdateBookCategoryDto) {
-    return `This action updates a #${id} bookCategory`;
+  async update(id: string, updateBookCategoryDto: UpdateBookCategoryDto) {
+    await this.findOne(id); // will throw if not exists
+    await this.bookCategoryRepository.update(id, updateBookCategoryDto);
+    return this.findOne(id);
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} bookCategory`;
+  async remove(id: string) {
+    await this.findOne(id);
+    return this.bookCategoryRepository.delete(id);
   }
-}
+} 

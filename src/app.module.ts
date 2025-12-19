@@ -3,6 +3,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { BookCategoryModule } from './book-category/book-category.module';
+import { BookModule } from './book/book.module';
 
 @Module({
   imports: [
@@ -18,6 +19,7 @@ import { BookCategoryModule } from './book-category/book-category.module';
       synchronize: true, // ใช้เฉพาะตอน Dev (มันจะแก้ Structure ตารางให้อัตโนมัติ)
     }),
     BookCategoryModule,
+    BookModule,
   ],
   controllers: [AppController],
   providers: [AppService],
