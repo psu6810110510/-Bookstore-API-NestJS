@@ -35,7 +35,7 @@ export class BookCategoryService implements OnModuleInit {
   }
 
   findAll() {
-    return `This action returns all bookCategory`;
+    return this.bookCategoryRepository.find();
   }
 
   findOne(id: number) {
