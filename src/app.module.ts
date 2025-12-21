@@ -1,29 +1,37 @@
 import { Module } from '@nestjs/common';
+import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { AppController } from './app.controller';
-import { AppService } from './app.service';
 import { BookModule } from './book/book.module';
 import { BookCategoryModule } from './book-category/book-category.module';
-import { BookCategory } from './book-category/entities/book-category.entity';
+import { UserModule } from './user/user.module';
+import { AuthModule } from './auth/auth.module';
 
 @Module({
   imports: [
-    TypeOrmModule.forRoot({
-      type: 'postgres',
-      host: '127.0.0.1',
-      port: 5432,
-      username: 'admin',
-      password: 'password123',
-      database: 'bookstore_dev',
-      autoLoadEntities: true,
-      entities: [BookCategory],
-      synchronize: true,
-      
+    ConfigModule.forRoot({ 
+      isGlobal: true,
+      envFilePath: 'book.env',
+    }), 
+
+    TypeOrmModule.forRootAsync({
+      imports: [ConfigModule],
+      inject: [ConfigService],
+      useFactory: async (configService: ConfigService) => ({
+        type: 'postgres',
+        host: configService.get<string>('DB_HOST'),
+        port: configService.get<number>('DB_PORT'),
+        username: configService.get<string>('DB_USERNAME'),
+        password: configService.get<string>('DB_PASSWORD') || 'password123',
+        database: configService.get<string>('DB_DATABASE'),
+        autoLoadEntities: true,
+        synchronize: true, 
+      }),
     }),
-    BookCategoryModule,
+
     BookModule,
+    BookCategoryModule,
+    UserModule,
+    AuthModule,
   ],
-  controllers: [AppController],
-  providers: [AppService],
 })
 export class AppModule {}
