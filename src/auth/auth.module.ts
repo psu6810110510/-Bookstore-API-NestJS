@@ -16,6 +16,6 @@ import { JwtStrategy } from './jwt.strategy';
     }),
   ],
   controllers: [AuthController],
-  providers: [AuthService, JwtStrategy], // เพิ่ม JwtStrategy เข้าไป
+  providers: [AuthService, JwtStrategy], 
 })
 export class AuthModule {}

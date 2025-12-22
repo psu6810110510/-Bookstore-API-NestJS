@@ -36,8 +36,10 @@ export class BookService {
     return this.bookRepo.save(newBook);
   }
 
-  findAll() {
-    return this.bookRepo.find({ relations: ['category'] });
+  async findAll() {
+    return this.bookRepo.find({
+      relations: ['likedBy'],
+    });
   }
 
   async findOne(id: string) {
@@ -65,4 +67,25 @@ export class BookService {
     book.likeCount += 1;
     return this.bookRepo.save(book);
   }
+
+  async toggleLike(bookId: string, userId: string) {
+  const book = await this.bookRepo.findOne({
+    where: { id: bookId },
+    relations: ['likedBy'],
+  });
+
+  if (!book) throw new NotFoundException('Book not found');
+
+  const isLiked = book.likedBy.some((user) => user.id === userId);
+
+  if (isLiked) {
+    book.likedBy = book.likedBy.filter((user) => user.id !== userId);
+  } else {
+    book.likedBy.push({ id: userId } as any);
+  }
+  book.likeCount = book.likedBy.length; 
+  await this.bookRepo.save(book);
+
+  return { status: isLiked ? 'unliked' : 'liked', totalLikes: book.likeCount };
+}
 }

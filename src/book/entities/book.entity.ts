@@ -1,5 +1,6 @@
-import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, JoinColumn } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, JoinColumn, JoinTable, ManyToMany } from 'typeorm';
 import { BookCategory } from '../../book-category/entities/book-category.entity';
+import { User } from '../../user/entities/user.entity';
 
 @Entity()
 export class Book {
@@ -19,6 +20,10 @@ export class Book {
   likeCount: number;
 
   @ManyToOne(() => BookCategory, { eager: true })
+
+  @ManyToMany(() => User, (user) => user.likedBooks)
+  @JoinTable()
+  likedBy: User[];
   
   @JoinColumn({ name: 'categoryId' })
   category: BookCategory;
